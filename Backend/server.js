@@ -25,7 +25,7 @@ dotenv.config();
 // RECEIVED CLOSE CRM POST WEBHOOK REQUEST
 //CLOSE WEBHOOK POST ENDPOINT
 app.post(
-	'/hook',
+	'/closehook',
 	asyncHandler(async (req, res) => {
 		console.log('WEBHOOK POST REQUEST ===>');
 		// GET THE DATA OR THE INFO OF THE SMS FROM THE CLOSE CRM WEBHOOK
@@ -186,7 +186,7 @@ app.post('/api/subscribe', protect, async (req, res) => {
 			username: process.env.API_KEY,
 		},
 		data: {
-			url: 'https://leadsmsapp.herokuapp.com/hook',
+			url: 'https://leadsmsapp.herokuapp.com/closehook',
 			events: [
 				{
 					object_type: 'activity.sms',
