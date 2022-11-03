@@ -69,7 +69,7 @@ app.post(
 				};
 
 				const { data } = await axios.get(
-					`https://sms.arkesel.com/sms/api?action=send-sms&api_key=${process.env.SMS_KEY}&to=17702035144&from=LEAD&sms=LEAD NAME : ${result.name}%0aCONTACT : ${contact.name}%0aPHONE : ${contact.phones[0].phone}%0aMESSAGE : ${text}`,
+					`https://sms.arkesel.com/sms/api?action=send-sms&api_key=${process.env.SMS_KEY}&to=233559517458&from=LEAD&sms=LEAD NAME : ${result.name}%0aCONTACT : ${contact.name}%0aPHONE : ${contact.phones[0].phone}%0aMESSAGE : ${text}`,
 					config
 				);
 
