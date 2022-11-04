@@ -24,86 +24,81 @@ dotenv.config();
 
 // RECEIVED CLOSE CRM POST WEBHOOK REQUEST
 //CLOSE WEBHOOK POST ENDPOINT
-app.post('/closehook', async (req, res) => {
+app.post('/sender', async (req, res) => {
 	console.log('WEBHOOK POST REQUEST ===>');
 	// GET THE DATA OR THE INFO OF THE SMS FROM THE CLOSE CRM WEBHOOK
 	const { event } = req.body;
 	const { local_phone_formatted, contact_id, lead_id, text } = event.data;
 
 	// CHECK IF IT CAME FROM EXISTING LEAD
-	if (lead_id) {
-		if (event.data.direction === 'inbound') {
-			// FETCH THE LEAD THE SMS CAME FROM
-			const response = await axios.get(
-				`https://api.close.com/api/v1/lead/${lead_id}`,
-				{
-					headers: {
-						Accept: 'application/json',
-					},
-					auth: {
-						username: process.env.API_KEY,
-					},
-				}
-			);
-
-			// GET THE DATA FROM THE LEAD FETCH RESPONSE
-			const { data: result } = response;
-
-			// GET THE LEAD NAME AND CONTACTS OF THE LEAD
-			const { contacts } = result;
-
-			// LOOP THROUGH THE CONTACTS FOR THE LEAD CONTACT OR SENDER
-			const contact = await contacts.find(
-				(contact) => contact.id === contact_id
-			);
-			// console.log('WEBHOOK EVENT ===>', event.data);
-			// console.log('SMS EVENT TYPE ===>', event.data.direction);
-
-			// FORWARD LEAD TEXT TO CLIENT AS SMS
-			const config = {
+	if (lead_id && event.data.direction === 'inbound') {
+		// FETCH THE LEAD THE SMS CAME FROM
+		const response = await axios.get(
+			`https://api.close.com/api/v1/lead/${lead_id}`,
+			{
 				headers: {
-					'Content-Type': 'application/json',
+					Accept: 'application/json',
 				},
-			};
+				auth: {
+					username: process.env.API_KEY,
+				},
+			}
+		);
 
-			const { data } = await axios.get(
-				`https://sms.arkesel.com/sms/api?action=send-sms&api_key=${process.env.SMS_KEY}&to=17702035144&from=LEAD&sms=LEAD NAME : ${result.name}%0aCONTACT : ${contact.name}%0aPHONE : ${contact.phones[0].phone}%0aMESSAGE : ${text}`,
-				config
-			);
+		// GET THE DATA FROM THE LEAD FETCH RESPONSE
+		const { data: result } = response;
 
-			console.log('LEAD ARKESEL SMS => ', data);
+		// GET THE LEAD NAME AND CONTACTS OF THE LEAD
+		const { contacts } = result;
 
-			// MAILING SMTP CONFIGUATION
-			// const transporter = nodemailer.createTransport({
-			// 	host: 'server233.web-hosting.com',
-			// 	port: 465,
-			// 	secure: true, // true for 465, false for other ports
-			// 	auth: {
-			// 		user: 'info@merkadobarkada.com', // your domain email address
-			// 		pass: process.env.USER_PASS, // your password
-			// 	},
-			// });
+		// LOOP THROUGH THE CONTACTS FOR THE LEAD CONTACT OR SENDER
+		const contact = await contacts.find((contact) => contact.id === contact_id);
+		// console.log('WEBHOOK EVENT ===>', event.data);
+		// console.log('SMS EVENT TYPE ===>', event.data.direction);
 
-			// MAIL SENDER OPTIONS
-			// const mailOptions = {
-			// 	from: '"Zap-Alike Server" <info@merkadobarkada.com>', // sender address (who sends)
-			// 	to: ['dr4lyf@gmail.com', 'aandrfamilyhousing@gmail.com'], // list of receivers (who receives)
-			// 	subject: `New Sms from ${result.name}`, // Subject line
-			// 	text: `LEAD NAME : ${result.name}\nCONTACT : ${contact.name}\nPHONE : ${contact.phones[0].phone}\nMESSAGE : ${text}`, // plaintext body
-			// 	// html: template,
-			// };
+		// FORWARD LEAD TEXT TO CLIENT AS SMS
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
 
-			// // SEND THE MAIL
-			// await transporter.sendMail(mailOptions, (error, response) => {
-			// 	error ? console.log(error) : console.log(response);
-			// 	transporter.close();
-			// });
+		const { data } = await axios.get(
+			`https://sms.arkesel.com/sms/api?action=send-sms&api_key=${process.env.SMS_KEY}&to=17702035144&from=LEAD&sms=LEAD NAME : ${result.name}%0aCONTACT : ${contact.name}%0aPHONE : ${contact.phones[0].phone}%0aMESSAGE : ${text}`,
+			config
+		);
 
-			res.redirect('/');
-		} else {
-			res.end();
-		}
-	} else {
+		console.log('LEAD ARKESEL SMS => ', data);
+
+		// MAILING SMTP CONFIGUATION
+		const transporter = nodemailer.createTransport({
+			host: 'server233.web-hosting.com',
+			port: 465,
+			secure: true, // true for 465, false for other ports
+			auth: {
+				user: 'info@merkadobarkada.com', // your domain email address
+				pass: process.env.USER_PASS, // your password
+			},
+		});
+
+		// MAIL SENDER OPTIONS
+		const mailOptions = {
+			from: '"Zap-Alike Server" <info@merkadobarkada.com>', // sender address (who sends)
+			to: ['dr4lyf@gmail.com', 'aandrfamilyhousing@gmail.com'], // list of receivers (who receives)
+			subject: `New Sms from ${result.name}`, // Subject line
+			text: `LEAD NAME : ${result.name}\nCONTACT : ${contact.name}\nPHONE : ${contact.phones[0].phone}\nMESSAGE : ${text}`, // plaintext body
+			// html: template,
+		};
+
+		// // SEND THE MAIL
+		await transporter.sendMail(mailOptions, (error, response) => {
+			error ? console.log(error) : console.log(response);
+			transporter.close();
+		});
+
+		res.redirect('/');
+	}
+	if (!lead_id || lead_id === undefined) {
 		if (event.data.direction === 'inbound') {
 			// FORWARD LEAD TEXT TO CLIENT AS SMS
 			const config = {
@@ -122,34 +117,32 @@ app.post('/closehook', async (req, res) => {
 			// console.log('WEBHOOK EVENT ===>', event);
 			// console.log('SMS EVENT TYPE ===>', event.data.direction);
 			// MAILING SMTP CONFIGUATION
-			// const transporter = nodemailer.createTransport({
-			// 	host: 'server233.web-hosting.com',
-			// 	port: 465,
-			// 	secure: true, // true for 465, false for other ports
-			// 	auth: {
-			// 		user: 'info@merkadobarkada.com', // your domain email address
-			// 		pass: process.env.USER_PASS, // your password
-			// 	},
-			// });
+			const transporter = nodemailer.createTransport({
+				host: 'server233.web-hosting.com',
+				port: 465,
+				secure: true, // true for 465, false for other ports
+				auth: {
+					user: 'info@merkadobarkada.com', // your domain email address
+					pass: process.env.USER_PASS, // your password
+				},
+			});
 
 			// MAIL SENDER OPTIONS
-			// const mailOptions = {
-			// 	from: '"Zap-Alike Server" <info@merkadobarkada.com>', // sender address (who sends)
-			// 	to: ['dr4lyf@gmail.com', 'aandrfamilyhousing@gmail.com'], // list of receivers (who receives)
-			// 	subject: `New Sms from not assigned lead`, // Subject line
-			// 	text: `LEAD NAME : Not Assigned\nCONTACT : Not Set\nPHONE : ${event.data.remote_phone}\nMESSAGE : ${text}`, // plaintext body
-			// 	// html: template,
-			// };
+			const mailOptions = {
+				from: '"Zap-Alike Server" <info@merkadobarkada.com>', // sender address (who sends)
+				to: ['dr4lyf@gmail.com', 'aandrfamilyhousing@gmail.com'], // list of receivers (who receives)
+				subject: `New Sms from not assigned lead`, // Subject line
+				text: `LEAD NAME : Not Assigned\nCONTACT : Not Set\nPHONE : ${event.data.remote_phone}\nMESSAGE : ${text}`, // plaintext body
+				// html: template,
+			};
 
 			// SEND THE MAIL
-			// transporter.sendMail(mailOptions, (error, response) => {
-			// 	error ? console.log(error) : console.log(response);
-			// 	transporter.close();
-			// });
+			transporter.sendMail(mailOptions, (error, response) => {
+				error ? console.log(error) : console.log(response);
+				transporter.close();
+			});
 
-			res.redirect();
-		} else {
-			res.end();
+			res.redirect('/');
 		}
 	}
 });
@@ -183,7 +176,7 @@ app.post('/api/subscribe', protect, async (req, res) => {
 			username: process.env.API_KEY,
 		},
 		data: {
-			url: 'https://leadsmsapp.herokuapp.com/closehook',
+			url: 'https://leadsmsapp.herokuapp.com/sender',
 			events: [
 				{
 					object_type: 'activity.sms',
