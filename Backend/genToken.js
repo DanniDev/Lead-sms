@@ -5,7 +5,6 @@ export default function (id) {
 		{
 			id,
 		},
-		process.env.JWT_SECRET,
-		{ expiresIn: '3d' }
+		process.env.JWT_SECRET
 	);
 }

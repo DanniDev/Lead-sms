@@ -12,7 +12,7 @@ import {
 } from '../constants/hookConstants';
 
 export const hookSubscribeReducer = (
-	state = { hookInfo: { id: '' } },
+	state = { hookDetails: { id: '' } },
 	action
 ) => {
 	switch (action.type) {
@@ -25,7 +25,7 @@ export const hookSubscribeReducer = (
 		case HOOK_SUBSCRIBE_SUCCESS:
 			return {
 				loading: false,
-				hookInfo: action.payload,
+				hookDetails: action.payload,
 			};
 
 		case HOOK_SUBSCRIBE_FAIL:
@@ -37,7 +37,7 @@ export const hookSubscribeReducer = (
 		case HOOK_SUBSCRIBE_RESET:
 			return {
 				loading: false,
-				hookInfo: { id: '' },
+				hookDetails: { id: '' },
 			};
 
 		default:
@@ -71,7 +71,7 @@ export const hookUnsubscribeReducer = (state = { succes: false }, action) => {
 	}
 };
 
-export const hookDetailsReducer = (state = {}, action) => {
+export const hookApiReducer = (state = {}, action) => {
 	switch (action.type) {
 		case HOOK_API_KEY_REQUEST:
 			return {
@@ -81,7 +81,7 @@ export const hookDetailsReducer = (state = {}, action) => {
 		case HOOK_API_KEY_SUCCESS:
 			return {
 				loading: false,
-				hook: action.payload,
+				hookApi: action.payload,
 			};
 
 		case HOOK_API_KEY_FAIL:

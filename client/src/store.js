@@ -7,20 +7,20 @@ import { adminLoginReducer } from './reducers/adminReducers';
 import {
 	hookSubscribeReducer,
 	hookUnsubscribeReducer,
-	hookDetailsReducer,
+	hookApiReducer,
 } from './reducers/hookReducers';
 const reducer = combineReducers({
 	adminLogin: adminLoginReducer,
 	hookSubscribe: hookSubscribeReducer,
 	hookUnsubscribe: hookUnsubscribeReducer,
-	hookDetails: hookDetailsReducer,
+	hookApi: hookApiReducer,
 });
 
 const adminInfoFromStorage = localStorage.getItem('adminInfo')
 	? JSON.parse(localStorage.getItem('adminInfo'))
 	: {};
-const hookInfoFromStorage = localStorage.getItem('hookInfo')
-	? JSON.parse(localStorage.getItem('hookInfo'))
+const hookDetailsFromStorage = localStorage.getItem('hookDetails')
+	? JSON.parse(localStorage.getItem('hookDetails'))
 	: { id: '' };
 
 const initialState = {
@@ -28,7 +28,7 @@ const initialState = {
 		adminInfo: adminInfoFromStorage,
 	},
 	hookSubscribe: {
-		hookInfo: hookInfoFromStorage,
+		hookDetails: hookDetailsFromStorage,
 	},
 };
 

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -15,11 +15,9 @@ export default function Panel() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
-	const { loading, error, hookInfo } = useSelector(
-		(state) => state.hookSubscribe
-	);
-	const { loading: loadingHookDetails, hook } = useSelector(
-		(state) => state.hookDetails
+	const { loading, hookDetails } = useSelector((state) => state.hookSubscribe);
+	const { loading: loadingHookApi, hookApi } = useSelector(
+		(state) => state.hookApi
 	);
 	const {
 		loading: loadingUnsubscribe,
@@ -27,33 +25,33 @@ export default function Panel() {
 		success,
 	} = useSelector((state) => state.hookUnsubscribe);
 
-	const [connected, setConnect] = useState(hookInfo.id.length > 1);
+	const [connected, setConnect] = useState(hookDetails.id.length > 1);
 
 	useEffect(() => {
-		if (hookInfo.id === '') {
+		if (hookDetails.id === '') {
 			dispatch(getApiKey('key'));
 		}
-		if (hookInfo.id.length > 1) {
+		if (hookDetails.id.length > 1) {
 			setConnect(true);
 			navigate('/cpanel');
 		} else {
 			setConnect(false);
 		}
-	}, [hookInfo.id, dispatch, navigate, success, connected]);
+	}, [hookDetails.id, dispatch, navigate, success, connected]);
 
 	const subscribeHandler = () => {
 		dispatch(subscribeHook());
 	};
 	const unSubscribeHandler = () => {
-		dispatch(unSubscribeHook(hookInfo.id));
+		dispatch(unSubscribeHook(hookDetails.id));
 	};
 	return (
 		<>
 			{loading && <Spinner loading={loading} />}
 			{loadingUnsubscribe && <Spinner loading={loadingUnsubscribe} />}
-			{loadingHookDetails && <Spinner loading={loadingHookDetails} />}
+			{loadingHookApi && <Spinner loading={loadingHookApi} />}
 
-			{!loading && !loadingHookDetails && !loadingUnsubscribe && (
+			{!loading && !loadingHookApi && !loadingUnsubscribe && (
 				<div className='pt-10 mx-auto container flex justify-center items-center flex-col'>
 					<div
 						className={clsx(

@@ -22,6 +22,8 @@ export const loginAdmin = (info) => async (dispatch) => {
 
 		localStorage.setItem('adminInfo', JSON.stringify(data));
 
+		localStorage.removeItem('hookInfo');
+
 		dispatch({
 			type: ADMIN_LOGIN_SUCCESS,
 			payload: data,

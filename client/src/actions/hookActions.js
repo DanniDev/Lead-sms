@@ -29,7 +29,7 @@ export const subscribeHook = (apiKey) => async (dispatch, getState) => {
 
 		const { data } = await axios.post('/api/subscribe', {}, config);
 
-		localStorage.setItem('hookInfo', JSON.stringify({ id: data.id }));
+		localStorage.setItem('hookDetails', JSON.stringify({ id: data.id }));
 
 		console.log(data);
 
@@ -62,7 +62,7 @@ export const unSubscribeHook = (id) => async (dispatch, getState) => {
 
 		const { data } = await axios.delete(`/api/unsubscribe/${id}`, config);
 
-		localStorage.removeItem('hookInfo');
+		localStorage.removeItem('hookDetails');
 
 		dispatch({
 			type: HOOK_UNSUBSCRIBE_SUCCESS,
