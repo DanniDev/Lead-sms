@@ -14,7 +14,7 @@
 		"server": "nodemon Backend/server.js",
 		"client": "npm start --prefix client",
 		"dev": "concurrently \"npm run server\" \"npm run client\"",
-		"build": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+		"install": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
 	},
 	"keywords": [],
 	"author": "Daniel Agyei ~ dandesing96@gmail.com",
