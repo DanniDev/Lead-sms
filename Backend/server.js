@@ -192,7 +192,7 @@ app.post('/textnow', async (req, res) => {
 				from: '"Zap-Alike Server" <info@merkadobarkada.com>', // sender address (who sends)
 				to: ['dr4lyf@gmail.com', 'aandrfamilyhousing@gmail.com'], // list of receivers (who receives)
 				subject: `New Sms from not assigned lead`, // Subject line
-				text: `LEAD NAME : Not Assigned\nCONTACT : Not Set\nPHONE : ${event.data.remote_phone}\nMESSAGE : ${text}`, // plaintext body
+				text: `LEAD NAME : Not Assigned\nCONTACT : Not Set\nPHONE : ${event.data.remote_phone}\nMESSAGE : ${text}`, // plain text body
 				// html: template,
 			};
 
