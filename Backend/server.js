@@ -368,7 +368,7 @@ app.post('/api/subscribe', protect, async (req, res) => {
 			username: process.env.API_KEY,
 		},
 		data: {
-			url: 'https://cute-puce-fly-garb.cyclic.app/textnow',
+			url: 'https://dead-gray-katydid-suit.cyclic.app/textnow',
 			events: [
 				{
 					object_type: 'activity.sms',
