@@ -11,7 +11,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "node Backend/server.js",
-		"server": "nodemon Backend/server.js",
+		"server": "nodemon Backend/server.js"
 	},
 	"keywords": [],
 	"author": "Daniel Agyei ~ dandesing96@gmail.com",
