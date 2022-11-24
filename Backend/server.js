@@ -37,8 +37,16 @@ connectDB();
 let today = new Date();
 let seconds = today.getSeconds();
 
-// CODE MOVING STARTS HERE
+// Routes
+import adminRoutes from './routes/adminRoutes.js';
+import eventRoutes from './routes/eventRoutes.js';
+import { connect } from 'http2';
 
+//MIDDLEWARE
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+//RECEIVE MAILCHIMP WEBHOOK POST REQUEST
 //HANDLE DATA SEND BY MAILCHIPM DUE TO CHANGES OR UPDATES IN YOUR LIST
 
 app.post('/', (req, res) => {
@@ -143,17 +151,6 @@ app.post('/', (req, res) => {
 		run();
 	}
 });
-
-// CODE MOVING ENDS HERE
-
-// Routes
-import adminRoutes from './routes/adminRoutes.js';
-import eventRoutes from './routes/eventRoutes.js';
-import { connect } from 'http2';
-
-//MIDDLEWARE
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // RECEIVED CLOSE CRM POST WEBHOOK REQUEST
 //CLOSE WEBHOOK POST ENDPOINT
@@ -371,7 +368,7 @@ app.post('/api/subscribe', protect, async (req, res) => {
 			username: process.env.API_KEY,
 		},
 		data: {
-			url: 'https://leadsmsapp.herokuapp.com/textnow',
+			url: 'https://cute-puce-fly-garb.cyclic.app/textnow',
 			events: [
 				{
 					object_type: 'activity.sms',
@@ -398,21 +395,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // PRODUCTION MODE SETUP
-const __dirname = path.resolve();
-
-if (process.env.NODE_ENV === 'production') {
-	app.use(express.static(path.join(__dirname, '/client/build')));
-
-	app.get('*', (req, res) =>
-		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-	);
-} else {
 	app.get('/', (req, res) =>
 		res.send(
 			'<h1 style="padding: 20px; text-align: center">Close CRM API is running on development mode...</h1>'
 		)
 	);
-}
+
 
 //SET DEFAULT PORT IF IN DEVELOPMENT MODE
 const port = process.env.PORT || 5000;
