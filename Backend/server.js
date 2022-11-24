@@ -51,6 +51,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.post('/', (req, res) => {
 	const { type, data } = req.body;
+	
+	
+	if (type !== "subscribe") { 
+	   console.log('IM FAKE HOOK REQUEST ==>');
+		return res.end();
+	}
 
 	console.log('IM MAILCHIMP WEBHOOK REQUEST ==>');
 	//CHECK TO SEE IF COMPLETELY NEW SUBSCRIBER
