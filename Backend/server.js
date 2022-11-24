@@ -21,7 +21,7 @@ import connectDB from './config/db.js';
 
 //Configs
 mailchimp.setConfig({
-	apiKey: process.env.API_KEY,
+	apiKey: process.env.MAILCHIMP_KEY,
 	server: 'us12',
 });
 
