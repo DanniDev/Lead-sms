@@ -53,11 +53,12 @@ app.post('/', (req, res) => {
 	const { type, data } = req.body;
 
 	console.log('IM MAILCHIMP WEBHOOK REQUEST ==>');
-
+	//CHECK TO SEE IF COMPLETELY NEW SUBSCRIBER
 	if (
-		data.merges.REFCODE > 1 === false &&
-		data.merges.REFERECODE.length > 1 === false
+		data.merges.REFCODE.length < 1  &&
+		data.merges.REFERECODE.length < 1 
 	) {
+		console.log('IM NEW SUBSCRIBER ==>');
 		const generatedCode = voucher_codes.generate({
 			length: 8,
 			count: 1,
@@ -97,13 +98,14 @@ app.post('/', (req, res) => {
 					},
 				}
 			);
-			return console.log('Successfully updated!');
+			console.log('Successfully saved new user to DB!');
+			return console.log('Successfully updated user field in Mailchimp!');
 		}
 
 		run();
-	} else if (data.merges.REFERECODE.length > 1 && data.merges.REFCODE > 1) {
+	} else if (data.merges.REFERECODE.length > 1 && data.merges.REFCODE.length > 1) {
 		//WAS REFERED BY SOMEONE
-		console.log("i'm refered");
+		console.log("I'M REFFERED BY FRIEND ==>");
 		const user = new User({
 			userId: data.id,
 			email: data.email,
