@@ -155,7 +155,7 @@ app.post('/', (req, res) => {
 // RECEIVED CLOSE CRM POST WEBHOOK REQUEST
 //CLOSE WEBHOOK POST ENDPOINT
 app.post('/textnow', async (req, res) => {
-	console.log('WEBHOOK POST REQUEST ===>');
+	console.log('CLOSE CRM WEBHOOK POST REQUEST ===>');
 	// GET THE DATA OR THE INFO OF THE SMS FROM THE CLOSE CRM WEBHOOK
 	const { event } = req.body;
 	const { local_phone_formatted, contact_id, lead_id, text } = event.data;
