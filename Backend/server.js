@@ -4,23 +4,156 @@ import dotenv from 'dotenv';
 import colors from 'colors';
 import morgan from 'morgan';
 import path from 'path';
+import async from 'async';
+import jwt from 'jsonwebtoken';
+import mailchimp from '@mailchimp/mailchimp_marketing';
+import md5 from 'md5';
 import nodemailer from 'nodemailer';
 import errorHandler from './middleware/errorMiddleware.js';
 import protect from './middleware/authMiddleware.js';
 import asyncHandler from 'express-async-handler';
 
+const app = express();
+
+//Models & DBs
+import User from './models/user.js';
+import connectDB from './config/db.js';
+
+//Configs
+mailchimp.setConfig({
+	apiKey: process.env.API_KEY,
+	server: 'us12',
+});
+
+const listId = process.env.LIST_ID;
+
+// INTITIALIZE APP ENVIROMENT VARIABLES
+dotenv.config();
+
+// Connect to mongodb atlas
+connectDB();
+
+//Initial variables
+let today = new Date();
+let seconds = today.getSeconds();
+
+// CODE MOVING STARTS HERE
+
+//HANDLE DATA SEND BY MAILCHIPM DUE TO CHANGES OR UPDATES IN YOUR LIST
+
+app.post('/', (req, res) => {
+	const { type, data } = req.body;
+
+	console.log('IM MAILCHIMP WEBHOOK REQUEST ==>');
+
+	if (
+		data.merges.REFCODE > 1 === false &&
+		data.merges.REFERECODE.length > 1 === false
+	) {
+		const generatedCode = voucher_codes.generate({
+			length: 8,
+			count: 1,
+		});
+
+		let referralCode = generatedCode[0] + seconds;
+
+		const token = jwt.sign(
+			{
+				user: data.email,
+			},
+			'secretKey'
+		);
+
+		const newUser = new User({
+			email: data.email,
+			referralCode: referralCode,
+			shareUrl: process.env.SHARE_URL + '=' + referralCode,
+			referralSource: token,
+			totalReferrals: 0,
+			status: 'subscribed',
+		});
+
+		async function run() {
+			const savedUser = await newUser.save();
+			const subscriber_hash = md5(savedUser.email.toLowerCase());
+
+			const response = await mailchimp.lists.updateListMember(
+				listId,
+				subscriber_hash,
+				{
+					merge_fields: {
+						REFCOUNT: 0,
+						SHAREURL: savedUser.shareUrl,
+						REFCODE: savedUser.referralCode,
+						REFSOURCE: savedUser.referralSource,
+					},
+				}
+			);
+			return console.log('Successfully updated!');
+		}
+
+		run();
+	} else if (data.merges.REFERECODE.length > 1 && data.merges.REFCODE > 1) {
+		//WAS REFERED BY SOMEONE
+		console.log("i'm refered");
+		const user = new User({
+			userId: data.id,
+			email: data.email,
+			referralCode: data.merges.REFCODE,
+			shareUrl: data.merges.SHAREURL,
+			referralSource: data.merges.REFSOURCE,
+			totalReferrals: data.merges.REFCOUNT,
+			refereCode: data.merges.REFERECODE,
+			status: 'subscribed',
+		});
+
+		//FIND REFEREE AND INCREMENT THEIR TOTALREFERRALS
+		async function run() {
+			const refereeUser = await User.findOne({
+				referralCode: data.merges.REFERECODE,
+			});
+
+			if (refereeUser) {
+				refereeUser.totalReferrals = refereeUser.totalReferrals += 1;
+
+				try {
+					//  UPDATE REFEREE IN DB
+					const updatedUser = await refereeUser.save();
+
+					//  UPDATE REFEREE IN MCHIMP
+					const email = updatedUser.email;
+					const subscriberHash = md5(email.toLowerCase());
+
+					const response = await mailchimp.lists.updateListMember(
+						listId,
+						subscriberHash,
+						{
+							merge_fields: {
+								REFCOUNT: addToRefcount,
+							},
+						}
+					);
+				} catch (error) {
+					console.log(error);
+					return next(error);
+				}
+			}
+		}
+
+		run();
+	}
+});
+
+// CODE MOVING ENDS HERE
+
 // Routes
 import adminRoutes from './routes/adminRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
-
-const app = express();
+import { connect } from 'http2';
 
 //MIDDLEWARE
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// INTITIALIZE APP ENVIROMENT VARIABLES
-dotenv.config();
 
 // RECEIVED CLOSE CRM POST WEBHOOK REQUEST
 //CLOSE WEBHOOK POST ENDPOINT

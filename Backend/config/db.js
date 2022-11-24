@@ -6,7 +6,7 @@ const connectDB = async () => {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 		});
-		console.log('CRM-DB is connected!'.cyan.underline.bold);
+		console.log('DB is connected!'.cyan.underline.bold);
 	} catch (err) {
 		console.log(err.message);
 	}

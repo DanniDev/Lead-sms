@@ -20,6 +20,8 @@
 	"author": "Daniel Agyei ~ dandesing96@gmail.com",
 	"license": "MIT",
 	"dependencies": {
+		"@mailchimp/mailchimp_marketing": "^3.0.80",
+		"async": "^3.2.4",
 		"axios": "^1.1.2",
 		"colors": "^1.4.0",
 		"cors": "^2.8.5",
@@ -27,9 +29,11 @@
 		"express": "^4.18.1",
 		"express-async-handler": "^1.2.0",
 		"jsonwebtoken": "^8.5.1",
+		"md5": "^2.3.0",
 		"mongoose": "^6.6.5",
 		"morgan": "^1.10.0",
-		"nodemailer": "^6.8.0"
+		"nodemailer": "^6.8.0",
+		"voucher-code-generator": "^1.3.0"
 	},
 	"devDependencies": {
 		"concurrently": "^7.5.0",
