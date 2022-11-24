@@ -368,7 +368,7 @@ app.post('/api/subscribe', protect, async (req, res) => {
 			username: process.env.API_KEY,
 		},
 		data: {
-			url: 'https://dead-gray-katydid-suit.cyclic.app/textnow',
+			url: 'https://lead-sms.onrender.com/textnow',
 			events: [
 				{
 					object_type: 'activity.sms',
