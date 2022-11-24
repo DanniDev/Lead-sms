@@ -12,8 +12,6 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "node Backend/server.js",
 		"server": "nodemon Backend/server.js",
-		"client": "npm start --prefix client",
-		"dev": "concurrently \"npm run server\" \"npm run client\"",
 	},
 	"keywords": [],
 	"author": "Daniel Agyei ~ dandesing96@gmail.com",
