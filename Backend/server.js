@@ -49,7 +49,7 @@ app.use(express.urlencoded({ extended: true }));
 //RECEIVE MAILCHIMP WEBHOOK POST REQUEST
 //HANDLE DATA SEND BY MAILCHIPM DUE TO CHANGES OR UPDATES IN YOUR LIST
 
-app.post('/', (req, res) => {
+app.post('/', (req, res, next) => {
 	const { type, data } = req.body;
 	
 	
@@ -91,7 +91,7 @@ app.post('/', (req, res) => {
 		async function run() {
 			try{
 				console.log("Im in try code!");
-					    console.log('USER INFO ==>', newUser);
+			    console.log('USER INFO ==>', newUser);
 				const savedUser = await newUser.save();
 			const subscriber_hash = md5(savedUser.email.toLowerCase());
 
@@ -111,7 +111,7 @@ app.post('/', (req, res) => {
 			return console.log('Successfully updated user field in Mailchimp!');
 			} catch(error){
 				console.log('error in try catch', error);
-				return console.log(error);
+				return console.log(error.message);
 			}
 		}
 
@@ -159,7 +159,7 @@ app.post('/', (req, res) => {
 						}
 					);
 				} catch (error) {
-					console.log(error);
+					console.log(error.message);
 					return next(error);
 				}
 			}
