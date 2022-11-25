@@ -90,7 +90,7 @@ app.post('/', (req, res) => {
 
 		async function run() {
 			try{
-				console.log("I'm in try code!");
+				console.log("Im in try code!");
 					    console.log('USER INFO ==>', newUser);
 				const savedUser = await newUser.save();
 			const subscriber_hash = md5(savedUser.email.toLowerCase());
