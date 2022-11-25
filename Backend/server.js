@@ -3,6 +3,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import colors from 'colors';
 import morgan from 'morgan';
+import voucher_codes from "voucher-code-generator";
 import path from 'path';
 import async from 'async';
 import jwt from 'jsonwebtoken';
