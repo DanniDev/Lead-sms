@@ -49,7 +49,7 @@ app.use(express.urlencoded({ extended: true }));
 //RECEIVE MAILCHIMP WEBHOOK POST REQUEST
 //HANDLE DATA SEND BY MAILCHIPM DUE TO CHANGES OR UPDATES IN YOUR LIST
 
-app.post('/', (req, res, next) => {
+app.post('/', async(req, res, next) => {
 	const { type, data } = req.body;
 	
 	
@@ -64,6 +64,7 @@ app.post('/', (req, res, next) => {
 		data.merges.REFCODE.length < 1  &&
 		data.merges.REFERECODE.length < 1 
 	) {
+		try{
 		console.log('IM NEW SUBSCRIBER ==>');
 		const generatedCode = voucher_codes.generate({
 			length: 8,
@@ -88,11 +89,10 @@ app.post('/', (req, res, next) => {
 			status: 'subscribed',
 		});
 
-		async function run() {
-			try{
-				console.log("Im in try code!");
-			    console.log('USER INFO ==>', newUser);
-				const savedUser = await newUser.save();
+			console.log("Im in try code!");
+		    	console.log('USER INFO ==>', newUser);
+			
+			const savedUser = await newUser.save();
 			const subscriber_hash = md5(savedUser.email.toLowerCase());
 
 			const response = await mailchimp.lists.updateListMember(
@@ -113,9 +113,7 @@ app.post('/', (req, res, next) => {
 				console.log('error in try catch', error);
 				return console.log(error.message);
 			}
-		}
-
-		run();
+		
 	} else if (data.merges.REFERECODE.length > 1 && data.merges.REFCODE.length > 1) {
 		//WAS REFERED BY SOMEONE
 		console.log("I'M REFFERED BY FRIEND ==>");
