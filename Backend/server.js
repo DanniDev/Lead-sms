@@ -89,7 +89,10 @@ app.post('/', (req, res) => {
 		});
 
 		async function run() {
-			const savedUser = await newUser.save();
+			try{
+				console.log('I'm in try code!');
+					    console.log('USER INFO ==>', newUser);
+				const savedUser = await newUser.save();
 			const subscriber_hash = md5(savedUser.email.toLowerCase());
 
 			const response = await mailchimp.lists.updateListMember(
@@ -106,6 +109,10 @@ app.post('/', (req, res) => {
 			);
 			console.log('Successfully saved new user to DB!');
 			return console.log('Successfully updated user field in Mailchimp!');
+			} catch(error){
+				console.log('error in try catch', error);
+				return console.log(error);
+			}
 		}
 
 		run();
@@ -134,9 +141,11 @@ app.post('/', (req, res) => {
 
 				try {
 					//  UPDATE REFEREE IN DB
+					await user.save();
 					const updatedUser = await refereeUser.save();
 
-					//  UPDATE REFEREE IN MCHIMP
+					//  UPDATE REFEREE IN MAILCHIMP
+					const addToRefcount = updatedUser.totalReferrals;
 					const email = updatedUser.email;
 					const subscriberHash = md5(email.toLowerCase());
 
